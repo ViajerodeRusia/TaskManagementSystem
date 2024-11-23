@@ -24,6 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для управления задачами.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,7 +38,12 @@ public class TaskService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-
+    /**
+     * Создает новую задачу.
+     *
+     * @param taskDTO объект передачи данных задачи
+     * @return созданная задача
+     */
     public TaskDTO createTask(TaskDTO taskDTO) {
         log.info("Creating task");
         Task task = taskMapper.toEntity(taskDTO);
@@ -51,6 +59,13 @@ public class TaskService {
         log.info("Created");
         return taskDTO;
     }
+
+    /**
+     * Редактирует существующую задачу.
+     *
+     * @param updateTaskDTO обновленный объект передачи данных задачи
+     * @return обновленная задача
+     */
     public UpdateTaskDTO editTask(UpdateTaskDTO updateTaskDTO) {
         log.info("Updating task");
 
@@ -77,6 +92,12 @@ public class TaskService {
         return updateTaskDTO;
     }
 
+    /**
+     * Удаляет задачу по ID.
+     *
+     * @param taskId ID задачи для удаления
+     * @return статус ответа
+     */
     public HttpStatus deleteTask(Long taskId) {
         Optional<Task> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isEmpty()) {
@@ -89,17 +110,36 @@ public class TaskService {
         log.info("Deleted task with ID {}", taskId);
         return HttpStatus.OK;
     }
+
+    /**
+     * Возвращает все задачи.
+     *
+     * @return список задач
+     */
     public List<TaskDTO> getAllTasks() {
         log.info("Getting all tasks");
         return taskMapper.toDTO(taskRepository.findAll());
     }
 
+    /**
+     * Возвращает задачи, назначенные текущему пользователю.
+     *
+     * @return список задач пользователя
+     */
     public List<TaskDTO> getUserTasks() {
         List<Task> tasks = taskRepository.findAll();
         return tasks.stream()
                 .map(taskMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * Обновляет статус задачи.
+     *
+     * @param id ID задачи
+     * @param status новый статус
+     * @return статус ответа
+     */
     @Transactional
     public HttpStatus updateTaskStatus(Long id, String status) {
         log.info("Starting transaction for updating task status");
@@ -122,6 +162,13 @@ public class TaskService {
         }
     }
 
+    /**
+     * Добавляет комментарий к задаче.
+     *
+     * @param id ID задачи
+     * @param comment текст комментария
+     * @return созданный комментарий
+     */
     public CommentDTO addComment(Long id, String comment) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
@@ -144,6 +191,13 @@ public class TaskService {
         }
     }
 
+    /**
+     * Добавляет комментарий к задаче пользователя.
+     *
+     * @param id ID задачи
+     * @param comment текст комментария
+     * @return созданный комментарий
+     */
     public CommentDTO addCommentUser(Long id, String comment) {
         Optional<Task> taskOpt = taskRepository.findById(id);
         if(taskOpt.isEmpty()) {
