@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>TaskManagementSystem</artifactId>
+	<artifactId>taskmanagementsystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TaskManagementSystem</name>
 	<description>Система управления задачами</description>
